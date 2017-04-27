@@ -32,6 +32,8 @@ public class AprioriUtils
 // Determines if an item with the specified frequency has minimum support or not.
     public static boolean hasMinSupport(double minSup, int numTxns, int itemCount) {
         /** COMPLETE **/
+        double share = itemCount / numTxns;
+        return (share >= minSup);
    }
 
 
@@ -69,6 +71,11 @@ public class AprioriUtils
         int prevPassItemSetsSize = prevPassItemSets.size();
 
         /** COMPLETE **/
+
+        for (ItemSet item : prevPassItemSets) {
+            if (prune(itemSetMap, item))
+                candidateItemSets.add(item);
+        }
 
 
         return candidateItemSets;
@@ -111,6 +118,17 @@ public class AprioriUtils
     static List<ItemSet> getSubSets(ItemSet itemSet) {
         List<ItemSet> subSets = new ArrayList<>();
         /** COMPLETE **/
+
+        for (int i = 0; i < itemSet.size() - 1; i++) {
+            ItemSet item = new ItemSet(0);
+            item.add(itemSet.get(i));
+
+            for (int j = i + 1; j < itemSet.size() - 1; j++) {
+                item.add(itemSet.get(j));
+
+                subSets.add((ItemSet)item.clone()); // Create a new reference
+            }
+        }
 
 
         return subSets;

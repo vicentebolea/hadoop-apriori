@@ -14,15 +14,23 @@ import java.io.IOException;
 
 public class AprioriReducer extends Reducer<Text, IntWritable, Text, IntWritable>
 {
+    private IntWritable result = new IntWritable();
+
     public void reduce(Text itemSet, Iterable<IntWritable> values, Context context)
             throws IOException, InterruptedException {
-        /** COMPLETE **/
-
-
 
         Double minSup = Double.parseDouble(context.getConfiguration().get("minSup"));
         Integer numTxns = context.getConfiguration().getInt("numTxns", 2);
 
+        int sum = 0;
+        for (IntWritable val : values) {
+            sum += val.get();
+        }
 
+
+        if (AprioriUtils.hasMinSupport(minSup, numTxns, sum)) {
+            result.set(sum);
+            context.write(itemSet, result);
+        }
     }
 }

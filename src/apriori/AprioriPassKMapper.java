@@ -102,5 +102,13 @@ public class AprioriPassKMapper extends Mapper<LongWritable, Text, Text, IntWrit
             throws IOException, InterruptedException {
         Transaction txn = AprioriUtils.getTransaction((int) key.get(), txnRecord.toString());
         /** COMPLETE **/
+
+        ArrayList<ItemSet> matchedItemSet = new ArrayList<>();
+        trie.findItemSets(matchedItemSet, txn);
+
+        for (ItemSet itemset : matchedItemSet) {
+           item.set(itemset.toString());
+           context.write(item, one);
+        }
     }
 }

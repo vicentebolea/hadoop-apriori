@@ -3,6 +3,8 @@ package trie;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import list.ItemSet;
+import list.Transaction;
 /**
  * Trie are used for efficiently searching for a pattern of items in a transaction in frequent
  * itemset mining algorithms. This represents the structure of a Trie.
@@ -24,7 +26,7 @@ public class Trie {
      * @return true on succesful insertion, false if the key
      *      already exists or the height is not correct.
      */
-    boolean add(ItemSet itemSet) {
+    public boolean add(ItemSet itemSet) {
         // For this assignment we do not consider the case
         // of different lengths
         if (height != itemSet.size())
@@ -64,7 +66,7 @@ public class Trie {
      * @return true if the key is inside the trie, false if the key
      *      does not exists or the height is not correct.
      */
-    boolean contains(ItemSet itemSet) {
+    public boolean contains(ItemSet itemSet) {
         // For this assignment we do not consider the case
         // of different lengths
         if (height != itemSet.size())
