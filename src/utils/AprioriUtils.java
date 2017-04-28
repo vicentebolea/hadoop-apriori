@@ -1,10 +1,12 @@
 package utils;
+import trie.Trie;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Iterator;
 
 import list.ItemSet;
 import list.Transaction;
@@ -21,7 +23,7 @@ public class AprioriUtils
         String[] words = currLine.split(" ");
         Transaction transaction = new Transaction(id);
 
-        for (int i = 1; i < words.length; i++) {
+        for (int i = 0; i < words.length; i++) {
             transaction.add(Integer.parseInt(words[i].trim()));
         }
 
@@ -32,7 +34,7 @@ public class AprioriUtils
 // Determines if an item with the specified frequency has minimum support or not.
     public static boolean hasMinSupport(double minSup, int numTxns, int itemCount) {
         /** COMPLETE **/
-        double share = itemCount / numTxns;
+        double share = (double)itemCount / (double)numTxns;
         return (share >= minSup);
    }
 
@@ -65,18 +67,29 @@ public class AprioriUtils
 */
 
     public static List<ItemSet> getCandidateItemSets(List<ItemSet> prevPassItemSets, int itemSetSize) {
-        List<ItemSet> candidateItemSets = new ArrayList<>();
+        ArrayList<ItemSet> candidateItemSets = new ArrayList<>();
         Map<Integer, ItemSet> itemSetMap = generateItemSetMap(prevPassItemSets);
         Collections.sort(prevPassItemSets);
         int prevPassItemSetsSize = prevPassItemSets.size();
 
-        /** COMPLETE **/
-
-        for (ItemSet item : prevPassItemSets) {
-            if (prune(itemSetMap, item))
-                candidateItemSets.add(item);
+        Iterator<ItemSet> it = prevPassItemSets.iterator();
+        while (it.hasNext()) {
+            ItemSet item_a = it.next();
+            if (it.hasNext()) {
+                for (ItemSet item_b = it.next() ; item_a.partialEqual(item_b) && it.hasNext(); item_b = it.next()) {
+                    ItemSet final_item = (ItemSet)item_a.clone();
+                    final_item.add(item_b.get(item_b.size() -1));
+                    candidateItemSets.add(final_item);
+                }
+            }
         }
 
+
+        for (ItemSet item : prevPassItemSets) {
+            if (!prune(itemSetMap, item))
+                candidateItemSets.remove(item);
+        }
+        
 
         return candidateItemSets;
     }
@@ -117,19 +130,14 @@ public class AprioriUtils
 //  Generate all possible k-1 subsets for ItemSet (preserves order)
     static List<ItemSet> getSubSets(ItemSet itemSet) {
         List<ItemSet> subSets = new ArrayList<>();
-        /** COMPLETE **/
 
-        for (int i = 0; i < itemSet.size() - 1; i++) {
-            ItemSet item = new ItemSet(0);
-            item.add(itemSet.get(i));
+        final int size = itemSet.size();  // k-1
 
-            for (int j = i + 1; j < itemSet.size() - 1; j++) {
-                item.add(itemSet.get(j));
-
-                subSets.add((ItemSet)item.clone()); // Create a new reference
-            }
+        for (int i = 0; i < size; i++) {
+            ItemSet item = (ItemSet)itemSet.clone();
+            item.remove(i);
+            subSets.add((ItemSet)item.clone()); // Create a new reference
         }
-
 
         return subSets;
     }

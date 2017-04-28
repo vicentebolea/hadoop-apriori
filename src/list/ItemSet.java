@@ -61,4 +61,16 @@ public class ItemSet extends ArrayList<Integer> implements Comparable<ItemSet> {
         }
         return 0;
     }
+    public boolean partialEqual(ItemSet that) {
+        List<Integer> thisItems = this;
+        List<Integer> thatItems = that;
+
+        for (int i = 0; i < thisItems.size() - 1; i++) {
+            int diff = thisItems.get(i).compareTo(thatItems.get(i));
+            if (diff != 0) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

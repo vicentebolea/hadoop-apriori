@@ -38,7 +38,6 @@ public class AprioriPassKMapper extends Mapper<LongWritable, Text, Text, IntWrit
     @Override
     public void setup(Context context)
             throws IOException {
-        /** COMPLETE **/
 
         int passNum = context.getConfiguration().getInt("passNum", 2);      // getInt(String name, int defaultValue) : Get the value of the name property as an int
         String lastPassOutputFile = "output" + (passNum - 1) + "/part-r-00000";	
@@ -84,7 +83,6 @@ public class AprioriPassKMapper extends Mapper<LongWritable, Text, Text, IntWrit
         // Generate the candidateItemSets using Self-Joining and pruning.
         candidateItemSets = AprioriUtils.getCandidateItemSets(itemSetsPrevPass, (passNum - 1));
 
-        /** COMPLETE **/
         trie = new Trie(passNum);
 
         int candidateItemSetsSize = candidateItemSets.size();
