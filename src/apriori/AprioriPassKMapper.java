@@ -101,8 +101,10 @@ public class AprioriPassKMapper extends Mapper<LongWritable, Text, Text, IntWrit
         Transaction txn = AprioriUtils.getTransaction((int) key.get(), txnRecord.toString());
         /** COMPLETE **/
 
+        System.out.println(txn.toString()) ;
         ArrayList<ItemSet> matchedItemSet = new ArrayList<>();
         trie.findItemSets(matchedItemSet, txn);
+        System.out.println(matchedItemSet.toString()) ;
 
         for (ItemSet itemset : matchedItemSet) {
            item.set(itemset.toString());

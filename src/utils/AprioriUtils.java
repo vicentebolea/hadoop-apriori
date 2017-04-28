@@ -72,16 +72,31 @@ public class AprioriUtils
         Collections.sort(prevPassItemSets);
         int prevPassItemSetsSize = prevPassItemSets.size();
 
-        Iterator<ItemSet> it = prevPassItemSets.iterator();
-        while (it.hasNext()) {
-            ItemSet item_a = it.next();
-            if (it.hasNext()) {
-                for (ItemSet item_b = it.next() ; item_a.partialEqual(item_b) && it.hasNext(); item_b = it.next()) {
-                    ItemSet final_item = (ItemSet)item_a.clone();
-                    final_item.add(item_b.get(item_b.size() -1));
-                    candidateItemSets.add(final_item);
-                }
+        //Iterator<ItemSet> it = prevPassItemSets.iterator();
+        //while (it.hasNext()) {
+        //    ItemSet item_a = it.next();
+        //    if (it.hasNext()) {
+        //        Iterator<ItemSet> it2 = it;
+        //        for (ItemSet item_b = it2.next() ; item_a.partialEqual(item_b) && it2.hasNext(); item_b = it2.next()) {
+        //            ItemSet final_item = (ItemSet)item_a.clone();
+        //            final_item.add(item_b.get(item_b.size() -1));
+        //            candidateItemSets.add(final_item);
+        //        }
+        //    }
+        //}
+
+        for (int i = 0; i < prevPassItemSetsSize; i++) {
+            ItemSet item_a = prevPassItemSets.get(i);
+
+            for (int j = i + 1; j < prevPassItemSetsSize; j++) {
+                ItemSet item_b = prevPassItemSets.get(j);
+                if(!item_a.partialEqual(item_b)) continue;
+
+                ItemSet final_item = (ItemSet)item_a.clone();
+                final_item.add(item_b.get(item_b.size() -1));
+                candidateItemSets.add(final_item);
             }
+        
         }
 
 
@@ -89,8 +104,8 @@ public class AprioriUtils
             if (!prune(itemSetMap, item))
                 candidateItemSets.remove(item);
         }
-        
 
+        System.out.println(candidateItemSets.toString()) ;
         return candidateItemSets;
     }
 
@@ -131,7 +146,7 @@ public class AprioriUtils
     static List<ItemSet> getSubSets(ItemSet itemSet) {
         List<ItemSet> subSets = new ArrayList<>();
 
-        final int size = itemSet.size();  // k-1
+        final int size = itemSet.size() - 1;  // k-1
 
         for (int i = 0; i < size; i++) {
             ItemSet item = (ItemSet)itemSet.clone();

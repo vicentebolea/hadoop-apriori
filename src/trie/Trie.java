@@ -2,6 +2,8 @@ package trie;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.HashMap;
 
 import list.ItemSet;
 import list.Transaction;
@@ -91,6 +93,16 @@ public class Trie {
         return rootNode;
     }
 
+    private void traverse(TrieNode currentNode, ArrayList<ItemSet> items) {
+        if (!currentNode.isLeafNode()) {
+            for (Map.Entry<Integer, TrieNode> entry : currentNode.entrySet())
+                traverse(entry.getValue(), items);
+        
+        } else {
+            items.add(currentNode.getItemSet());
+        }
+    }
+
     /**
      * Find the the combination of a list of integers inside the trie.
      * @param matchedItemSet Output parameter which will contain the ItemSets
@@ -100,18 +112,19 @@ public class Trie {
      */
     public void findItemSets(ArrayList<ItemSet> matchedItemSet, ArrayList<Integer> transaction) {
 
-        // Compute every possible combination of the 
-        // given list of integers
-        for (int i = 0; i < transaction.size(); i++) {
-            ItemSet item = new ItemSet(0);
-            item.add(transaction.get(i));
+        ArrayList<ItemSet> allSets = new ArrayList<>();
+        traverse(getRootNode(), allSets);
 
-            for (int j = i + 1; j < transaction.size(); j++) {
-                item.add(transaction.get(j));
-
-                if (contains(item)) {
-                    matchedItemSet.add((ItemSet)item.clone()); // Create a new reference
+        for (ItemSet item : allSets) {
+            boolean toSave = true;
+            for (Integer number : item) {
+                if(!transaction.contains(number)) {
+                    toSave = false;
                 }
+            }
+
+            if (toSave) {
+                matchedItemSet.add(item);
             }
         }
     }
