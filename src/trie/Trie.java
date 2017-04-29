@@ -95,8 +95,8 @@ public class Trie {
 
     private void traverse(TrieNode currentNode, ArrayList<ItemSet> items) {
         if (!currentNode.isLeafNode()) {
-            for (Map.Entry<Integer, TrieNode> entry : currentNode.entrySet())
-                traverse(entry.getValue(), items);
+            for (TrieNode node : currentNode.values())
+                traverse(node, items);
         
         } else {
             items.add(currentNode.getItemSet());

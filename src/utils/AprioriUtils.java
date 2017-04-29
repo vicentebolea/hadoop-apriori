@@ -33,7 +33,6 @@ public class AprioriUtils
 
 // Determines if an item with the specified frequency has minimum support or not.
     public static boolean hasMinSupport(double minSup, int numTxns, int itemCount) {
-        /** COMPLETE **/
         double share = (double)itemCount / (double)numTxns;
         return (share >= minSup);
    }
@@ -68,44 +67,38 @@ public class AprioriUtils
 
     public static List<ItemSet> getCandidateItemSets(List<ItemSet> prevPassItemSets, int itemSetSize) {
         ArrayList<ItemSet> candidateItemSets = new ArrayList<>();
+        ArrayList<ItemSet> preCandidateItemSets = new ArrayList<>();
         Map<Integer, ItemSet> itemSetMap = generateItemSetMap(prevPassItemSets);
         Collections.sort(prevPassItemSets);
         int prevPassItemSetsSize = prevPassItemSets.size();
 
-        //Iterator<ItemSet> it = prevPassItemSets.iterator();
-        //while (it.hasNext()) {
-        //    ItemSet item_a = it.next();
-        //    if (it.hasNext()) {
-        //        Iterator<ItemSet> it2 = it;
-        //        for (ItemSet item_b = it2.next() ; item_a.partialEqual(item_b) && it2.hasNext(); item_b = it2.next()) {
-        //            ItemSet final_item = (ItemSet)item_a.clone();
-        //            final_item.add(item_b.get(item_b.size() -1));
-        //            candidateItemSets.add(final_item);
-        //        }
-        //    }
-        //}
-
+        // Generate every possible C_{k+1} from each C_{k-1} candidate
         for (int i = 0; i < prevPassItemSetsSize; i++) {
             ItemSet item_a = prevPassItemSets.get(i);
 
             for (int j = i + 1; j < prevPassItemSetsSize; j++) {
                 ItemSet item_b = prevPassItemSets.get(j);
+
+                // Partial equal compares until k-1 the itemSets
                 if(!item_a.partialEqual(item_b)) continue;
 
                 ItemSet final_item = (ItemSet)item_a.clone();
                 final_item.add(item_b.get(item_b.size() -1));
-                candidateItemSets.add(final_item);
+                preCandidateItemSets.add(final_item);
             }
-        
         }
 
+        System.out.println("Candidates before prunning: " + preCandidateItemSets.size());
 
-        for (ItemSet item : prevPassItemSets) {
-            if (!prune(itemSetMap, item))
-                candidateItemSets.remove(item);
+        // Prune the candidates which any of its subsets
+        // are not included in the previous candidates
+        for (ItemSet item : preCandidateItemSets) {
+            if (prune(itemSetMap, item))
+                candidateItemSets.add(item);
         }
 
-        System.out.println(candidateItemSets.toString()) ;
+        System.out.println("Candidates after prunning: " + candidateItemSets.size());
+
         return candidateItemSets;
     }
 
@@ -146,7 +139,7 @@ public class AprioriUtils
     static List<ItemSet> getSubSets(ItemSet itemSet) {
         List<ItemSet> subSets = new ArrayList<>();
 
-        final int size = itemSet.size() - 1;  // k-1
+        final int size = itemSet.size();  // k-1
 
         for (int i = 0; i < size; i++) {
             ItemSet item = (ItemSet)itemSet.clone();

@@ -27,7 +27,6 @@ public class AprioriReducer extends Reducer<Text, IntWritable, Text, IntWritable
             sum += val.get();
         }
 
-
         if (AprioriUtils.hasMinSupport(minSup, numTxns, sum)) {
             result.set(sum);
             context.write(itemSet, result);
