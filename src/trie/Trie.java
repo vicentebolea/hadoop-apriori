@@ -93,10 +93,12 @@ public class Trie {
         return rootNode;
     }
 
-    private void traverse(TrieNode currentNode, ArrayList<ItemSet> items) {
+    private void traverse(TrieNode currentNode, ArrayList<ItemSet> items, ArrayList<Integer> transaction) {
         if (!currentNode.isLeafNode()) {
-            for (TrieNode node : currentNode.values())
-                traverse(node, items);
+            for (Integer current : transaction)
+                if (currentNode.containsKey(current)) { 
+                    traverse(currentNode.get(current), items, transaction);
+                }
         
         } else {
             items.add(currentNode.getItemSet());
@@ -111,21 +113,6 @@ public class Trie {
      *        if its contained in the trie.
      */
     public void findItemSets(ArrayList<ItemSet> matchedItemSet, ArrayList<Integer> transaction) {
-
-        ArrayList<ItemSet> allSets = new ArrayList<>();
-        traverse(getRootNode(), allSets);
-
-        for (ItemSet item : allSets) {
-            boolean toSave = true;
-            for (Integer number : item) {
-                if(!transaction.contains(number)) {
-                    toSave = false;
-                }
-            }
-
-            if (toSave) {
-                matchedItemSet.add(item);
-            }
-        }
+        traverse(getRootNode(), matchedItemSet, transaction);
     }
 }
