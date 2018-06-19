@@ -1,9 +1,3 @@
-#######################################################
-# BDSA Lab
-#
-# Homework 04 - Apriori implementation 
-#######################################################
-
 In this assignment, you will implement Apriori algorithm in Hadoop
 
 ***********
@@ -351,8 +345,4 @@ The report must be in PDF/Word format and include the following :
 - Test how much solution space is reduced by pruning.
 
 - Describe why we consider generating (k+1)-newItemSet only for the same thing up to (k-1) consecutively in self-joining step.
-
-
-If you have any questions, Please send an email to bongki@unist.ac.kr
-
 
